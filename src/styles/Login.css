@@ -1,0 +1,13 @@
+.login_div {
+    margin: auto auto;
+    width: 40%;
+
+}
+
+@media (max-width:668px) {
+    .login_div {
+        width: 100%;
+
+    }
+
+}
