@@ -62,7 +62,7 @@ Start the server
 
 
 ## Server-Side Code
-[Capital Movies Server](https://github.com/Shadow-Chaser/powerHack-server)
+[Power Hack Server](https://github.com/Shadow-Chaser/powerHack-server)
 
 
 ## Feedback
