@@ -15,54 +15,56 @@ import {
 import '../styles/Register.css'
 import { emailRegex, passRegex } from '../utils/RegEx'
 import { Link } from "react-router-dom";
+import authFunctions from '../authentication/authFunctions'
+import axios from 'axios';
 
 
 const Registration = () => {
     const toast = useToast();
     const [show, setShow] = useState(false)
     const [regInfo, setRegInfo] = useState({})
-    console.log("RegInfo: ", regInfo);
     const [inputError, setInputError] = useState({})
-    // console.log("errorInfo: ", inputError);
 
     const handleClick = () => setShow(!show)
 
     const handleInputValidation = (e) => {
         const inputName = e.target.name;
         const inputValue = e.target.value;
-        // console.log(inputValue);
         const info = { ...regInfo };
         if (inputName === 'email') {
             if (!emailRegex.test(inputValue)) {
-                setInputError({ name: inputName, errorMessage: 'Please Type a Valid Email !' })
+                setInputError({ ...inputError, email: "Invalid Email" })
                 info[inputName] = null;
                 setRegInfo(info)
             } else {
-                setInputError(null);
+                setInputError({ ...inputError, email: "" });
                 info[inputName] = inputValue;
                 setRegInfo(info)
             };
         };
         if (inputName === 'password') {
             if (!passRegex.test(inputValue)) {
-                setInputError({ name: inputName, errorMessage: 'Must be more than 8 chars combine with uppercase and lowercase, and at least one number' })
+                setInputError({ ...inputError, password: "Password must be more than 8 chars combine with uppercase and lowercase, and at least one number" })
                 info[inputName] = null;
                 setRegInfo(info)
             }
             else {
-                setInputError(null)
+                setInputError({ ...inputError, password: "" })
                 info[inputName] = inputValue;
                 setRegInfo(info)
             }
         };
-        if (inputName === 'displayName') {
+        if (inputName === 'name') {
             info[inputName] = inputValue;
             setRegInfo(info)
         }
     };
 
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
+        const res = await authFunctions.registerUser(regInfo);
+        console.log(res);
+
 
     };
 
@@ -78,13 +80,14 @@ const Registration = () => {
                     <Heading className='mb-3' as="h1" size="xl" isTruncated> Create Your Account! </Heading>
                     <FormControl id="name" isRequired>
                         <FormLabel> <i class="bi bi-type" /> Name</FormLabel>
-                        <Input onChange={handleInputValidation} size="lg" name='displayName' type="text" placeholder="Enter your Name" />
+                        <Input onChange={handleInputValidation} size="lg" name='name' type="text" placeholder="Enter your Name" />
                     </FormControl>
                     <FormControl id="email" isRequired>
                         <FormLabel> <i class="bi bi-envelope-fill" /> Email</FormLabel>
                         <Input onChange={handleInputValidation} size="lg" name='email' type="email" placeholder="Enter email address" />
                         {
-                            inputError?.name === 'email' && <p className='text-danger text-center'>{inputError?.errorMessage}</p>
+                            inputError?.email &&
+                            <p>{inputError?.email}</p>
                         }
                     </FormControl>
 
@@ -105,7 +108,8 @@ const Registration = () => {
                             </InputRightElement>
                         </InputGroup>
                         {
-                            inputError?.name === 'password' && <p className='text-danger text-center'>{inputError?.errorMessage}</p>
+                            inputError?.password &&
+                            <p>{inputError?.password}</p>
                         }
                     </FormControl>
                     <Button onClick={handleRegister} colorScheme="teal" size="md" className='mt-4 '> Register </Button>

@@ -1,0 +1,16 @@
+.search-bar {
+    /* background: rgb(239, 237, 237); */
+    margin-top: 15px;
+}
+
+.editBtn {
+    cursor: pointer;
+    font-weight: bold;
+    color: green;
+}
+
+.deleteBtn {
+    cursor: pointer;
+    font-weight: bold;
+    color: red;
+}
