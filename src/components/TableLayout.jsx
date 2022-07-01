@@ -17,12 +17,14 @@ import {
 } from '@chakra-ui/react'
 import BillForm from "./BillForm";
 import axios from "axios";
+import SearchResult from "./SearchResult";
 
 const TableLayout = () => {
     const toast = useToast()
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [bills, setBills] = useContext(BillContext);
     const [billData, setBillData] = useState({});
+    const [searchedText, setSearchedText] = useState("");
 
     const handleInput = (e) => {
         e.preventDefault()
@@ -66,6 +68,32 @@ const TableLayout = () => {
             });
     };
 
+    const handleDeleting = (id) => {
+        axios.delete(`https://fierce-refuge-99891.herokuapp.com/delete-billing/${id}`)
+            .then(function (response) {
+
+                const newBills = [...bills]
+                const res = newBills.filter(b => b._id !== id)
+                setBills(res)
+
+                toast({
+                    title: `Bill deleted successfully! `,
+                    status: "success",
+                    position: "top",
+                    isClosable: true,
+                })
+
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
+    const handleSearchInput = (e) => {
+        e.preventDefault()
+        setSearchedText(e.target.value)
+    };
+
     return (
         <div>
             <div className="search-bar d-flex justify-content-around mb-4">
@@ -73,7 +101,7 @@ const TableLayout = () => {
                     <h5>Billings</h5>
                     <div>
                         <InputGroup size='sm'>
-                            <Input type='text' placeholder='Search bill by' />
+                            <Input type='text' onChange={handleSearchInput} placeholder='Search bill by Full name' />
                             <InputRightAddon children='Search' />
                         </InputGroup>
                     </div>
@@ -81,6 +109,8 @@ const TableLayout = () => {
                 </div>
                 <Button onClick={onOpen} size='sm' colorScheme='blue'>Add New Bill</Button>
             </div>
+
+            <SearchResult searchText={searchedText} />
 
             {/* Modal */}
             <Modal isOpen={isOpen} onClose={onClose}>
@@ -140,7 +170,7 @@ const TableLayout = () => {
                                 <td>{b.phone}</td>
                                 <td>${b.paidAmount}</td>
                                 <td>
-                                    <span className="editBtn">Edit</span> | <span className="deleteBtn">Delete</span>
+                                    <span className="editBtn">Edit</span> | <span onClick={() => handleDeleting(b._id)} className="deleteBtn">Delete</span>
                                 </td>
                             </tr>
                         )
