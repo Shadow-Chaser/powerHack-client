@@ -8,11 +8,13 @@ import {
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Registration from "./pages/Registration";
+import PrivateRoute from "./routes/PrivateRoute";
 
 export const BillContext = createContext();
+export const UserContext = createContext();
 
 function App() {
-
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")) || {});
   const [bills, setBills] = useState([]);
 
   useEffect(() => {
@@ -27,18 +29,21 @@ function App() {
   }, [])
 
   return (
-    <BillContext.Provider value={[bills, setBills]}>
-      <div className="App">
-        <BrowserRouter>
-          <Routes>
-            <Route path="/registration" element={<Registration />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={<Home />} />
-            <Route path="/home" element={<Home />} />
-          </Routes>
-        </BrowserRouter>
-      </div>
-    </BillContext.Provider>
+    <UserContext.Provider value={[user, setUser]}>
+      <BillContext.Provider value={[bills, setBills]}>
+        <div className="App">
+          <BrowserRouter>
+            <Routes>
+              <Route path="/registration" element={<Registration />} />
+              <Route path="/login" element={<Login />} />
+              <Route element={<PrivateRoute />}>
+                <Route path="/" element={<Home />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </div>
+      </BillContext.Provider>
+    </UserContext.Provider>
   );
 }
 

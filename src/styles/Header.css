@@ -6,3 +6,8 @@
 .header-container h2 {
     font-weight: bold;
 }
+
+.header-container p {
+    font-weight: bold;
+    cursor: pointer;
+}

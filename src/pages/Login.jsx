@@ -13,12 +13,17 @@ import {
     useToast
 } from "@chakra-ui/react"
 import '../styles/Login.css'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios, { Axios } from 'axios';
+import authFunctions from '../authentication/authFunctions';
+import { UserContext } from '../App';
 
 const Login = () => {
     const toast = useToast()
     const [show, setShow] = useState(false)
     const [loginInfo, setLoginInfo] = useState({});
+    const [user, setUser] = useContext(UserContext);
+    const navigate = useNavigate();
     const handleClick = () => setShow(!show)
 
 
@@ -30,8 +35,22 @@ const Login = () => {
     }
     // console.log(loginInfo);
 
-    const handleSignIn = () => {
+    const handleSignIn = async (e) => {
+        e.preventDefault();
+        const res = await authFunctions.loginUser(loginInfo);
+        if (res) {
+            setUser({
+                "email": loginInfo.email
+            })
+            localStorage.setItem("user", JSON.stringify({
+                "email": loginInfo.email
+            }));
 
+            navigate('/');
+        }
+        else {
+            console.log("auth fail");
+        }
     }
 
     return (
@@ -63,7 +82,7 @@ const Login = () => {
                     </FormControl>
                     <Button onClick={handleSignIn} colorScheme="teal" size="md" className='mt-4 '> Log In </Button>
                     <p>Don't have an account? Please
-                        <Link to='/register'>
+                        <Link to='/registration'>
                             <Button className='ms-2' colorScheme="teal" variant="outline"> Register </Button>
                         </Link>
                     </p>

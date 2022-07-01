@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react"
 import '../styles/Register.css'
 import { emailRegex, passRegex } from '../utils/RegEx'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import authFunctions from '../authentication/authFunctions'
 import axios from 'axios';
 
@@ -24,6 +24,7 @@ const Registration = () => {
     const [show, setShow] = useState(false)
     const [regInfo, setRegInfo] = useState({})
     const [inputError, setInputError] = useState({})
+    const navigate = useNavigate();
 
     const handleClick = () => setShow(!show)
 
@@ -64,6 +65,9 @@ const Registration = () => {
         e.preventDefault();
         const res = await authFunctions.registerUser(regInfo);
         console.log(res);
+        if (res) {
+            navigate('/login')
+        }
 
 
     };
